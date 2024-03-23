@@ -2,8 +2,6 @@ package com.argus.vacationpayservice.model;
 
 import lombok.*;
 
-import java.util.List;
-
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,5 +12,5 @@ import java.util.List;
 public class Month {
     private int month;
 
-    private List<Integer> days;
+    private String days;
 }

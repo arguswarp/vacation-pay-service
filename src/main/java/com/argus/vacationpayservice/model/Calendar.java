@@ -2,7 +2,9 @@ package com.argus.vacationpayservice.model;
 
 import lombok.*;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.Map;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,5 +14,5 @@ import java.util.List;
 @EqualsAndHashCode
 public class Calendar {
     private int year;
-    private List<Month> months;
+    private Map<LocalDate, Boolean> holidaysMap;
 }
