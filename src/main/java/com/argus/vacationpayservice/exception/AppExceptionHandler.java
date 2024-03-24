@@ -21,7 +21,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         log.error(e.getMessage());
         return ResponseEntity.badRequest().body(e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining()));
+                .collect(Collectors.joining(" ")));
     }
 
     @ExceptionHandler({CalendarNotExistException.class})
@@ -32,7 +32,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     private ResponseEntity<Object> handleOtherExceptions(RuntimeException e) {
-        log.error(e.getCause().getMessage() + Arrays.toString(e.getStackTrace()));
+        log.error(e.getMessage() + Arrays.toString(e.getStackTrace()));
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }

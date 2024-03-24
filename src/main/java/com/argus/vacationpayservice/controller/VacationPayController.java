@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 
 @RequiredArgsConstructor
@@ -29,8 +30,12 @@ public class VacationPayController {
                                    @RequestParam(required = false) LocalDate from,
                                    @RequestParam(required = false) LocalDate to) {
         if (from != null && to != null) {
+            if (from.isAfter(to)) {
+                throw new DateTimeException("Date from must be before date to");
+            }
             var yearFrom = from.getYear();
             var yearTo = to.getYear();
+
             if (yearFrom == yearTo) {
                 days = calendarService.excludeHolidays(from, to, calendarService.get(yearFrom));
             } else {
