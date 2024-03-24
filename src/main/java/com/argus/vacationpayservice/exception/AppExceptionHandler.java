@@ -33,6 +33,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler
     private ResponseEntity<Object> handleOtherExceptions(RuntimeException e) {
         log.error(e.getMessage() + Arrays.toString(e.getStackTrace()));
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

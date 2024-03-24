@@ -13,6 +13,8 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode
 public class CalendarDTO {
+
     private Integer year;
+
     private List<Month> months;
 }

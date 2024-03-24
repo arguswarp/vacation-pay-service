@@ -20,7 +20,9 @@ import java.time.LocalDate;
 @Validated
 @Slf4j
 public class VacationPayController {
+
     private final PayService payService;
+
     private final CalendarService calendarService;
 
     @GetMapping("calculate")
@@ -29,13 +31,15 @@ public class VacationPayController {
                                    @Min(0) @RequestParam(defaultValue = "0") int days,
                                    @RequestParam(required = false) LocalDate from,
                                    @RequestParam(required = false) LocalDate to) {
+        log.info(String.format("Calculating request with params: " +
+                "monthly pay - %.2f, day - %d, from - %s, to %s", monthlyPay, days, from, to));
         if (from != null && to != null) {
             if (from.isAfter(to)) {
                 throw new DateTimeException("Date from must be before date to");
             }
             var yearFrom = from.getYear();
             var yearTo = to.getYear();
-
+            //Выходные и праздники исключаю из продолжительности отпуска согласно ТЗ (обычно при расчете просто берется продолжительность)
             if (yearFrom == yearTo) {
                 days = calendarService.excludeHolidays(from, to, calendarService.get(yearFrom));
             } else {

@@ -5,6 +5,7 @@ import com.argus.vacationpayservice.model.Calendar;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -13,8 +14,11 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class CalendarServiceTest {
+
     private final int YEAR = 2024;
+
     @Autowired
     private CalendarService calendarService;
 
@@ -30,10 +34,10 @@ class CalendarServiceTest {
     @Transactional
     void WhenHolidaysExcluded_ThenAppropriateDaysGiven() {
         var calendar = Calendar.builder()
-                .year(2024)
+                .year(YEAR)
                 .holidays(
-                        Set.of(LocalDate.of(2024, 3, 8),
-                                LocalDate.of(2024, 4, 8)
+                        Set.of(LocalDate.of(YEAR, 3, 8),
+                                LocalDate.of(YEAR, 4, 8)
                         )
                 )
                 .build();
@@ -53,8 +57,8 @@ class CalendarServiceTest {
         var calendarThisYear = Calendar.builder()
                 .year(2024)
                 .holidays(
-                        Set.of(LocalDate.of(2024, 12, 31),
-                                LocalDate.of(2024, 4, 8)
+                        Set.of(LocalDate.of(YEAR, 12, 31),
+                                LocalDate.of(YEAR, 4, 8)
                         )
                 )
                 .build();
@@ -62,8 +66,8 @@ class CalendarServiceTest {
         var calendarNextYear = Calendar.builder()
                 .year(2025)
                 .holidays(
-                        Set.of(LocalDate.of(2025, 1, 1),
-                                LocalDate.of(2025, 2, 2)
+                        Set.of(LocalDate.of(YEAR + 1, 1, 1),
+                                LocalDate.of(YEAR + 1, 2, 2)
                         )
                 )
                 .build();

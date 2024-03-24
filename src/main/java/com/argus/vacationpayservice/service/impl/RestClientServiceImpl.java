@@ -9,8 +9,11 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 @Service
 public class RestClientServiceImpl implements RestClientService {
+
     private final String URL_BEGIN = "https://xmlcalendar.ru/data/ru/";
+
     private final String URL_END = "/calendar.json";
+
     private final RestTemplate restTemplate;
 
     @Override

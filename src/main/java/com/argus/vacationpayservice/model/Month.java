@@ -10,6 +10,7 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 public class Month {
+
     private int month;
 
     private String days;

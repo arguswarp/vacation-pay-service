@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+//TODO: mb use mapstruct
 @Component
 public class CalendarMapper {
     public Calendar convertToCalendar(CalendarDTO calendarDTO) {

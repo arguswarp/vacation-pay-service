@@ -21,11 +21,14 @@ import java.util.Set;
 @Table(name = "calendar")
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Calendar {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private Integer year;
+
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     private Set<LocalDate> holidays;

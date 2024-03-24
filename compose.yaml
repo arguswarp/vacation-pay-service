@@ -1,0 +1,36 @@
+version: '0.1'
+
+services:
+  app:
+    container_name: vacation-pay-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      - DB_URL=$DB_URL
+      - DB_USERNAME=$DB_USERNAME
+      - DB_PASSWORD=$DB_PASSWORD
+    ports:
+      - 8080:8080
+    networks:
+      - vps-net
+    restart: unless-stopped
+  db:
+    image: postgres:16
+    container_name: vps-db
+    environment:
+      - POSTGRES_USER=$DB_USERNAME
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=vacation_pay_service_db
+    ports:
+      - 5432:5432
+    networks:
+      - vps-net
+    volumes:
+      - vps_data:/var/lib/postgresql/data
+volumes:
+  vps_data:
+networks:
+  vps-net:

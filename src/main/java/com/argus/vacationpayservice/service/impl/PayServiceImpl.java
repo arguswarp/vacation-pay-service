@@ -5,12 +5,13 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 @Service
 public class PayServiceImpl implements PayService {
 
-    private static final double AVERAGE_DAYS_IN_MONTH = 29.3;
+    private final double AVERAGE_DAYS_IN_MONTH = 29.3;
 
-    private static final double NDFL = 0.13;
+    private final double NDFL = 0.13;
 
     private final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
 

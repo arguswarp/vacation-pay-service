@@ -1,0 +1,9 @@
+spring:
+  mvc:
+    format:
+      date: 'dd.MM.yyyy'
+  application:
+    name: vacation-pay-service
+  profiles:
+    default: prod
+    active: prod

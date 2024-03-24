@@ -9,6 +9,7 @@ import com.argus.vacationpayservice.service.RestClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -19,7 +20,9 @@ import java.time.temporal.ChronoUnit;
 public class CalendarServiceImpl implements CalendarService {
 
     private final CalendarRepository calendarRepository;
+
     private final CalendarMapper calendarMapper;
+
     private final RestClientService restClientService;
 
     @Override
@@ -34,8 +37,8 @@ public class CalendarServiceImpl implements CalendarService {
                 var calendar = calendarMapper.convertToCalendar(calendarDTO);
                 log.info("Calendar for " + year + " saved to db");
                 return calendarRepository.save(calendar);
-            } catch (RuntimeException e) {
-                throw new CalendarNotExistException("Calendar for this year not exist yet", e);
+            } catch (RestClientException e) {
+                throw new CalendarNotExistException("Calendar for this year not exist", e);
             }
         }
     }
@@ -51,6 +54,7 @@ public class CalendarServiceImpl implements CalendarService {
         }
         return durationResult;
     }
+    //TODO: refactor with func interface?
     @Override
     public Integer excludeHolidays(LocalDate from, LocalDate to, Calendar calendarThisYear, Calendar calendarNextYear) {
         var duration = ChronoUnit.DAYS.between(from, to) + 1;
