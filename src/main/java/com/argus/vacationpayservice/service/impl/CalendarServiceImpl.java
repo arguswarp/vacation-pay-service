@@ -1,48 +1,41 @@
 package com.argus.vacationpayservice.service.impl;
 
-import com.argus.vacationpayservice.dto.CalendarDTO;
+import com.argus.vacationpayservice.exception.CalendarNotExistException;
 import com.argus.vacationpayservice.model.Calendar;
+import com.argus.vacationpayservice.model.mapper.CalendarMapper;
+import com.argus.vacationpayservice.repository.CalendarRepository;
 import com.argus.vacationpayservice.service.CalendarService;
+import com.argus.vacationpayservice.service.RestClientService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class CalendarServiceImpl implements CalendarService {
 
-    private final RestTemplate restTemplate;
+    private final CalendarRepository calendarRepository;
+    private final CalendarMapper calendarMapper;
+    private final RestClientService restClientService;
 
     @Override
-    public CalendarDTO get(int year) {
-        return restTemplate.getForObject("https://xmlcalendar.ru/data/ru/" + year + "/calendar.json", CalendarDTO.class);
-    }
-
-    @Override
-    public Calendar convertToCalendar(CalendarDTO calendarDTO) {
-        var calendar = Calendar.builder()
-                .year(calendarDTO.getYear())
-                .build();
-        Set<LocalDate> holidays = new HashSet<>();
-        calendarDTO.getMonths().forEach(month -> Arrays.stream(month.getDays().split(","))
-                .forEach(s -> {
-                    s = s.trim();
-                    if (s.endsWith("+")) {
-                        s = String.valueOf(s.charAt(0));
-                    }
-                    if (!s.endsWith("*")) {
-                        holidays.add(LocalDate.of(calendarDTO.getYear(), month.getMonth(), Integer.parseInt(s)));
-                    }
-                })
-        );
-        calendar.setHolidays(holidays);
-        return calendar;
+    public Calendar get(int year) {
+        var calendarOptional = calendarRepository.findByYear(year);
+        if (calendarOptional.isPresent()) {
+            return calendarOptional.get();
+        } else {
+            try {
+                var calendarDTO = restClientService.get(year);
+                var calendar = calendarMapper.convertToCalendar(calendarDTO);
+                return calendarRepository.save(calendar);
+            } catch (RuntimeException e) {
+                throw new CalendarNotExistException("Calendar for this year not exist yet", e);
+            }
+        }
     }
 
     @Override
@@ -51,6 +44,20 @@ public class CalendarServiceImpl implements CalendarService {
         var durationResult = (int) duration;
         for (int i = 0; i < duration; i++) {
             if (calendar.getHolidays().contains(from.plusDays(i))) {
+                durationResult--;
+            }
+        }
+        return durationResult;
+    }
+    @Override
+    public Integer excludeHolidays(LocalDate from, LocalDate to, Calendar calendarThisYear, Calendar calendarNextYear) {
+        var duration = ChronoUnit.DAYS.between(from, to) + 1;
+        var durationResult = (int) duration;
+        for (int i = 0; i < duration; i++) {
+            if (calendarThisYear.getHolidays().contains(from.plusDays(i))) {
+                durationResult--;
+            }
+            if (calendarNextYear.getHolidays().contains(from.plusDays(i))) {
                 durationResult--;
             }
         }

@@ -1,5 +1,6 @@
 package com.argus.vacationpayservice.controller;
 
+import com.argus.vacationpayservice.service.CalendarService;
 import com.argus.vacationpayservice.service.PayService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,8 +19,8 @@ import java.time.temporal.ChronoUnit;
 @Validated
 @Slf4j
 public class VacationPayController {
-
     private final PayService payService;
+    private final CalendarService calendarService;
 
     @GetMapping("calculate")
     @ResponseStatus(HttpStatus.OK)
@@ -29,7 +29,13 @@ public class VacationPayController {
                                    @RequestParam(required = false) LocalDate from,
                                    @RequestParam(required = false) LocalDate to) {
         if (from != null && to != null) {
-            days = (int) ChronoUnit.DAYS.between(from, to) + 1;
+            var yearFrom = from.getYear();
+            var yearTo = to.getYear();
+            if (yearFrom == yearTo) {
+                days = calendarService.excludeHolidays(from, to, calendarService.get(yearFrom));
+            } else {
+                days = calendarService.excludeHolidays(from, to, calendarService.get(yearFrom), calendarService.get(yearTo));
+            }
             log.debug("Vacation duration in days " + days);
         }
         return payService.calculateByDays(monthlyPay, days);
