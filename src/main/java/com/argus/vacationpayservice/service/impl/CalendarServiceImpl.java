@@ -26,11 +26,13 @@ public class CalendarServiceImpl implements CalendarService {
     public Calendar get(int year) {
         var calendarOptional = calendarRepository.findByYear(year);
         if (calendarOptional.isPresent()) {
+            log.debug("Load calendar from db");
             return calendarOptional.get();
         } else {
             try {
                 var calendarDTO = restClientService.get(year);
                 var calendar = calendarMapper.convertToCalendar(calendarDTO);
+                log.info("Calendar for " + year + " saved to db");
                 return calendarRepository.save(calendar);
             } catch (RuntimeException e) {
                 throw new CalendarNotExistException("Calendar for this year not exist yet", e);
