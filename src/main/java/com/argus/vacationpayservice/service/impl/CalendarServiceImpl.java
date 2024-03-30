@@ -13,6 +13,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.function.Predicate;
 
 @RequiredArgsConstructor
 @Service
@@ -45,28 +46,26 @@ public class CalendarServiceImpl implements CalendarService {
 
     @Override
     public Integer excludeHolidays(LocalDate from, LocalDate to, Calendar calendar) {
-        var duration = ChronoUnit.DAYS.between(from, to) + 1;
-        var durationResult = (int) duration;
-        for (int i = 0; i < duration; i++) {
-            if (calendar.getHolidays().contains(from.plusDays(i))) {
-                durationResult--;
-            }
-        }
-        return durationResult;
+        var duration = (int) ChronoUnit.DAYS.between(from, to) + 1;
+        var holidays = countHolidays(duration, i -> calendar.getHolidays().contains(from.plusDays(i)));
+        return duration - holidays;
     }
-    //TODO: refactor with func interface?
+
     @Override
     public Integer excludeHolidays(LocalDate from, LocalDate to, Calendar calendarThisYear, Calendar calendarNextYear) {
-        var duration = ChronoUnit.DAYS.between(from, to) + 1;
-        var durationResult = (int) duration;
+        var duration = (int) ChronoUnit.DAYS.between(from, to) + 1;
+        var holidaysThisYear = countHolidays(duration, i -> calendarThisYear.getHolidays().contains(from.plusDays(i)));
+        var holidaysNextYear = countHolidays(duration, i -> calendarNextYear.getHolidays().contains(from.plusDays(i)));
+        return duration - holidaysThisYear - holidaysNextYear;
+    }
+
+    private Integer countHolidays(int duration, Predicate<Integer> predicate) {
+        var holidays = 0;
         for (int i = 0; i < duration; i++) {
-            if (calendarThisYear.getHolidays().contains(from.plusDays(i))) {
-                durationResult--;
-            }
-            if (calendarNextYear.getHolidays().contains(from.plusDays(i))) {
-                durationResult--;
+            if (predicate.test(i)) {
+                holidays++;
             }
         }
-        return durationResult;
+        return holidays;
     }
 }
