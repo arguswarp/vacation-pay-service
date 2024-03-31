@@ -29,7 +29,7 @@ public interface CalendarMapper {
                         s = String.valueOf(s.charAt(0));
                     }
                     if (!s.endsWith("*")) {
-                        holidays.add(LocalDate.of(LocalDate.now().getYear(), month.getMonth(), Integer.parseInt(s)));
+                        holidays.add(LocalDate.of(calendarDTO.getYear(), month.getMonth(), Integer.parseInt(s)));
                     }
                 })
         );
