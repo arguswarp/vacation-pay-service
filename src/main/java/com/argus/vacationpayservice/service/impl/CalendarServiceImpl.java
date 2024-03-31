@@ -8,6 +8,7 @@ import com.argus.vacationpayservice.service.CalendarService;
 import com.argus.vacationpayservice.service.RestClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
@@ -25,7 +26,7 @@ public class CalendarServiceImpl implements CalendarService {
     private final CalendarMapper calendarMapper;
 
     private final RestClientService restClientService;
-
+    @Cacheable("calendars")
     @Override
     public Calendar get(int year) {
         var calendarOptional = calendarRepository.findByYear(year);

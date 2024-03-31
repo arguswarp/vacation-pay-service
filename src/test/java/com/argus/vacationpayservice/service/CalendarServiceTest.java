@@ -2,6 +2,7 @@ package com.argus.vacationpayservice.service;
 
 import com.argus.vacationpayservice.exception.CalendarNotExistException;
 import com.argus.vacationpayservice.model.Calendar;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Slf4j
 class CalendarServiceTest {
 
     private final int YEAR = 2024;
@@ -85,5 +87,14 @@ class CalendarServiceTest {
     @Transactional
     void WhenGetCalendarNotExisting_CalendarNotExistExceptionThrown() {
         assertThrows(CalendarNotExistException.class, () -> calendarService.get(LocalDate.now().getYear() + 2));
+    }
+
+    @Test
+    @Transactional
+    void WhenGetMultipleTimes_ThenGetFromCache() {
+        calendarService.get(LocalDate.now().getYear());
+        log.info("calendar found: {}", calendarService.get(YEAR));
+        log.info("calendar found: {}", calendarService.get(YEAR));
+        log.info("calendar found: {}", calendarService.get(YEAR));
     }
 }
