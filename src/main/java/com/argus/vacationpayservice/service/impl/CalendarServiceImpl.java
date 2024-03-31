@@ -36,7 +36,7 @@ public class CalendarServiceImpl implements CalendarService {
         } else {
             try {
                 var calendarDTO = restClientService.get(year);
-                var calendar = calendarMapper.convertToCalendar(calendarDTO);
+                var calendar = calendarMapper.calendarDTOToCalendar(calendarDTO);
                 log.info("Calendar for " + year + " saved to db");
                 return calendarRepository.save(calendar);
             } catch (RestClientException e) {

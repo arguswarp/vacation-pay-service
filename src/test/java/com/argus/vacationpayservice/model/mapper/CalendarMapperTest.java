@@ -10,7 +10,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CalendarMapperTest {
-    private final CalendarMapper calendarMapper = new CalendarMapper();
+    private final CalendarMapper calendarMapper = new CalendarMapperImpl();
 
     private final static int YEAR = 2024;
 
@@ -30,7 +30,7 @@ class CalendarMapperTest {
                 ))
                 .build();
 
-        var calendar = calendarMapper.convertToCalendar(calendarDTO);
+        var calendar = calendarMapper.calendarDTOToCalendar(calendarDTO);
 
         assertNotNull(calendar);
         assertEquals(YEAR, calendar.getYear());
